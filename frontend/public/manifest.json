@@ -1,0 +1,33 @@
+{
+  "name": "Aditya Gym",
+  "short_name": "Aditya Gym",
+  "description": "Gym Management App for Members, Coaches and Admin",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#dc2626",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "fitness"],
+  "shortcuts": [
+    {
+      "name": "Mark Attendance",
+      "short_name": "Attendance",
+      "url": "/member/attendance",
+      "description": "Mark today's gym attendance"
+    },
+    {
+      "name": "Today's Workout",
+      "short_name": "Workout",
+      "url": "/member/workout",
+      "description": "View your assigned workout plan"
+    }
+  ]
+}
