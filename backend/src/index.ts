@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import pool from './config/db';
 
 import authRoutes from './routes/auth.routes';
 import memberRoutes from './routes/members.routes';
@@ -47,8 +48,22 @@ app.use('/api/photos', photoRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/reports', reportRoutes);
 
-app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+app.get('/api/health', async (_req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected' });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ status: 'error', db: 'failed', error: msg });
+  }
+});
+
+pool.query('SELECT 1').then(() => {
+  console.log('DB connected');
+}).catch((err) => {
+  console.error('DB connection failed:', err.message);
+});
 
 app.listen(PORT, () => {
-  console.log(`Aditya Gym API running on http://localhost:${PORT}`);
+  console.log(`Aditya Gym API running on port ${PORT}`);
 });
