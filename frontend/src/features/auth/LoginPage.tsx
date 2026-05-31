@@ -50,7 +50,7 @@ export default function LoginPage() {
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="admin@gymapp.com or AG-00001"
+                placeholder="Enter your user id"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-gray-700 border border-gray-600 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
               />
@@ -99,11 +99,11 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-gray-700">
+          {/* <div className="mt-6 pt-5 border-t border-gray-700">
             <p className="text-xs text-gray-500 text-center">
               Default member password = Member ID (e.g. AG-00001)
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
