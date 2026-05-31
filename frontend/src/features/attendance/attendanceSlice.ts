@@ -3,6 +3,7 @@ import { attendanceApi } from '../../services/api';
 
 interface AttendanceRecord {
   id: number;
+  member_db_id: number;
   member_id: string;
   full_name: string;
   phone: string;

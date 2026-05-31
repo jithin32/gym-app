@@ -16,7 +16,7 @@ router.post('/', requireRole('admin'), createMember);
 router.get('/:id', requireRole('admin', 'coach'), getMember);
 router.put('/:id', requireRole('admin'), updateMember);
 router.delete('/:id', requireRole('admin'), deleteMember);
-router.post('/:id/freeze', requireRole('admin'), freezeMember);
-router.post('/:id/renew', requireRole('admin'), renewMember);
+router.post('/:id/freeze', requireRole('admin', 'coach'), freezeMember);
+router.post('/:id/renew', requireRole('admin', 'coach'), renewMember);
 
 export default router;

@@ -6,8 +6,7 @@ import Modal from '../../components/ui/Modal';
 import Button from '../../components/ui/Button';
 import Badge, { statusBadge } from '../../components/ui/Badge';
 import MemberForm from './MemberForm';
-import { Search, UserPlus, Pencil, Trash2, SnowflakeIcon, RefreshCw, Dumbbell } from 'lucide-react';
-import QuickAssignModal from '../workoutPlans/QuickAssignModal';
+import { Search, UserPlus, Pencil, Trash2, SnowflakeIcon, RefreshCw } from 'lucide-react';
 
 export default function MemberList() {
   const dispatch = useAppDispatch();
@@ -19,7 +18,6 @@ export default function MemberList() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<Member | null>(null);
-  const [assignTarget, setAssignTarget] = useState<Member | null>(null);
 
   useEffect(() => {
     dispatch(fetchMembers());
@@ -87,7 +85,7 @@ export default function MemberList() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
         {loading ? (
           <div className="flex items-center justify-center h-40 text-gray-500">Loading...</div>
         ) : filtered.length === 0 ? (
@@ -96,70 +94,65 @@ export default function MemberList() {
             <p className="text-sm">Try adjusting your search or filters</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100 text-left">
-                <th className="px-4 py-3 font-semibold text-gray-600">Member</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">Plan</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">Goal</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">Coach</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">Expires</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">Status</th>
-                <th className="px-4 py-3 font-semibold text-gray-600">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filtered.map((m) => (
-                <tr key={m.id} className="hover:bg-gray-50 transition">
-                  <td className="px-4 py-3">
-                    <div className="font-semibold text-gray-900">{m.full_name}</div>
-                    <div className="text-xs text-gray-500">{m.member_id} · {m.phone}</div>
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{m.plan_name ?? '—'}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant="blue">{goalLabel[m.goal] ?? m.goal}</Badge>
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{m.coach_name ?? <span className="text-gray-400">—</span>}</td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {m.end_date ? new Date(m.end_date).toLocaleDateString() : '—'}
-                  </td>
-                  <td className="px-4 py-3">{statusBadge(m.status)}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => setAssignTarget(m)}
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-primary-600 transition"
-                        title="Assign workout"
-                      >
-                        <Dumbbell className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => { setEditing(m); setShowForm(true); }}
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-primary-600 transition"
-                        title="Edit"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => dispatch(freezeMember(m.id))}
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition"
-                        title={m.status === 'frozen' ? 'Unfreeze' : 'Freeze'}
-                      >
-                        {m.status === 'frozen' ? <RefreshCw className="w-4 h-4" /> : <SnowflakeIcon className="w-4 h-4" />}
-                      </button>
-                      <button
-                        onClick={() => setDeleteConfirm(m)}
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto rounded-xl">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-100 text-left">
+                  <th className="px-4 py-3 font-semibold text-gray-600">Member</th>
+                  <th className="px-4 py-3 font-semibold text-gray-600">Plan</th>
+                  <th className="px-4 py-3 font-semibold text-gray-600">Goal</th>
+                  <th className="px-4 py-3 font-semibold text-gray-600">Coach</th>
+                  <th className="px-4 py-3 font-semibold text-gray-600">Expires</th>
+                  <th className="px-4 py-3 font-semibold text-gray-600">Status</th>
+                  <th className="px-4 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {filtered.map((m) => (
+                  <tr key={m.id} className="hover:bg-gray-50 transition">
+                    <td className="px-4 py-3">
+                      <div className="font-semibold text-gray-900 whitespace-nowrap">{m.full_name}</div>
+                      <div className="text-xs text-gray-500 whitespace-nowrap">{m.member_id} · {m.phone}</div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{m.plan_name ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      <Badge variant="blue">{goalLabel[m.goal] ?? m.goal}</Badge>
+                    </td>
+                    <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{m.coach_name ?? <span className="text-gray-400">—</span>}</td>
+                    <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
+                      {m.end_date ? new Date(m.end_date).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="px-4 py-3">{statusBadge(m.status)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => { setEditing(m); setShowForm(true); }}
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-primary-600 transition"
+                          title="Edit"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => dispatch(freezeMember(m.id))}
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition"
+                          title={m.status === 'frozen' ? 'Unfreeze' : 'Freeze'}
+                        >
+                          {m.status === 'frozen' ? <RefreshCw className="w-4 h-4" /> : <SnowflakeIcon className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirm(m)}
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
@@ -175,21 +168,6 @@ export default function MemberList() {
           coaches={coaches.map((c) => ({ id: c.id, full_name: c.full_name }))}
           onClose={() => setShowForm(false)}
         />
-      </Modal>
-
-      {/* Quick assign workout */}
-      <Modal
-        isOpen={!!assignTarget}
-        onClose={() => setAssignTarget(null)}
-        title={`Assign Workout — ${assignTarget?.full_name}`}
-        size="lg"
-      >
-        {assignTarget && (
-          <QuickAssignModal
-            member={{ id: assignTarget.id, full_name: assignTarget.full_name }}
-            onClose={() => setAssignTarget(null)}
-          />
-        )}
       </Modal>
 
       {/* Delete confirmation */}

@@ -38,7 +38,7 @@ export const getTodayAttendance = async (_req: Request, res: Response): Promise<
   const today = new Date().toISOString().split('T')[0];
   try {
     const present = await pool.query(`
-      SELECT a.id, a.check_in, m.member_id, m.full_name, m.phone,
+      SELECT a.id, a.check_in, m.id AS member_db_id, m.member_id, m.full_name, m.phone,
              c.full_name AS coach_name
       FROM attendance a
       JOIN members m ON a.member_id = m.id
