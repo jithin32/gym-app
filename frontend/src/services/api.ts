@@ -125,6 +125,7 @@ export const photosApi = {
 export const notificationsApi = {
   list: () => api.get('/notifications'),
   count: () => api.get('/notifications/count'),
+  checkExpiry: () => api.post('/notifications/check-expiry'),
   markRead: (id: number) => api.put(`/notifications/${id}/read`),
   markAllRead: () => api.put('/notifications/read-all'),
 };

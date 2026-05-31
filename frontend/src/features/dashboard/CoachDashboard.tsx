@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { dashboardApi } from '../../services/api';
+import { dashboardApi, notificationsApi } from '../../services/api';
 import { Users, CalendarCheck } from 'lucide-react';
 import StatCard from '../../components/ui/StatCard';
 import Badge from '../../components/ui/Badge';
@@ -25,6 +25,7 @@ export default function CoachDashboard() {
       setTotal(res.data.totalMembers ?? 0);
       setPresent(res.data.presentToday ?? 0);
     }).finally(() => setLoading(false));
+    notificationsApi.checkExpiry().catch(() => {});
   }, []);
 
   const goalLabel: Record<string, string> = {

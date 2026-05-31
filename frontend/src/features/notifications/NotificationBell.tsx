@@ -11,6 +11,7 @@ const typeIcon: Record<string, string> = {
   plan_assigned: '💪',
   fee_due: '💳',
   new_member: '👋',
+  membership_expiry: '⏰',
   default: '🔔',
 };
 

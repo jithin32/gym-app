@@ -6,7 +6,8 @@ import Modal from '../../components/ui/Modal';
 import Button from '../../components/ui/Button';
 import Badge, { statusBadge } from '../../components/ui/Badge';
 import MemberForm from './MemberForm';
-import { Search, UserPlus, Pencil, Trash2, SnowflakeIcon, RefreshCw } from 'lucide-react';
+import { Search, UserPlus, Pencil, Trash2, SnowflakeIcon, RefreshCw, Eye } from 'lucide-react';
+import MemberDetailModal from './MemberDetailModal';
 
 export default function MemberList() {
   const dispatch = useAppDispatch();
@@ -18,6 +19,7 @@ export default function MemberList() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Member | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<Member | null>(null);
+  const [detailMember, setDetailMember] = useState<Member | null>(null);
 
   useEffect(() => {
     dispatch(fetchMembers());
@@ -126,6 +128,13 @@ export default function MemberList() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
                         <button
+                          onClick={() => setDetailMember(m)}
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition"
+                          title="View details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => { setEditing(m); setShowForm(true); }}
                           className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-primary-600 transition"
                           title="Edit"
@@ -169,6 +178,9 @@ export default function MemberList() {
           onClose={() => setShowForm(false)}
         />
       </Modal>
+
+      {/* Member detail — measurements & payments */}
+      <MemberDetailModal member={detailMember} onClose={() => setDetailMember(null)} />
 
       {/* Delete confirmation */}
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Member" size="sm">

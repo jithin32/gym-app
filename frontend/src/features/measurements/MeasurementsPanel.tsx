@@ -97,7 +97,67 @@ export default function MeasurementsPanel({ memberId, memberName, canEdit = fals
         </div>
       )}
 
-      {tab === 'chart' ? (
+      {tab === 'history' && (
+        <div>
+          {loading ? (
+            <div className="text-center py-8 text-gray-400">Loading...</div>
+          ) : records.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">No measurements recorded yet</div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100 text-left">
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">Date</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">Weight</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">Body Fat</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">Chest</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">Waist</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">L.Bicep</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">R.Bicep</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600 whitespace-nowrap">Height</th>
+                    {canEdit && <th className="px-4 py-3" />}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {records.map((r) => (
+                    <tr key={r.id} className="hover:bg-gray-50 transition">
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <p className="font-medium text-gray-900">
+                          {new Date(r.recorded_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </p>
+                        {r.recorded_by_name && (
+                          <p className="text-xs text-gray-400">{r.recorded_by_name}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.weight_kg != null ? `${r.weight_kg}kg` : '—'}</td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.body_fat_pct != null ? `${r.body_fat_pct}%` : '—'}</td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.chest_cm != null ? `${r.chest_cm}cm` : '—'}</td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.waist_cm != null ? `${r.waist_cm}cm` : '—'}</td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.bicep_left_cm != null ? `${r.bicep_left_cm}cm` : '—'}</td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.bicep_right_cm != null ? `${r.bicep_right_cm}cm` : '—'}</td>
+                      <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{r.height_cm != null ? `${r.height_cm}cm` : '—'}</td>
+                      {canEdit && (
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => dispatch(deleteMeasurement(r.id))}
+                            className="p-1 text-gray-300 hover:text-red-500 transition"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'chart' && (
         <div className="bg-white rounded-xl border border-gray-100 p-4">
           {chartData.length < 2 ? (
             <div className="text-center py-8 text-gray-400 flex flex-col items-center gap-2">
@@ -131,52 +191,6 @@ export default function MeasurementsPanel({ memberId, memberName, canEdit = fals
                 </LineChart>
               </ResponsiveContainer>
             </>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {loading ? (
-            <div className="text-center py-8 text-gray-400">Loading...</div>
-          ) : records.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">No measurements recorded yet</div>
-          ) : (
-            records.map((r) => (
-              <div key={r.id} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      {new Date(r.recorded_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                    {r.recorded_by_name && <p className="text-xs text-gray-500">by {r.recorded_by_name}</p>}
-                  </div>
-                  {canEdit && (
-                    <button
-                      onClick={() => dispatch(deleteMeasurement(r.id))}
-                      className="p-1 text-gray-400 hover:text-red-500 transition"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 text-sm">
-                  {[
-                    ['Weight', r.weight_kg, 'kg'],
-                    ['Height', r.height_cm, 'cm'],
-                    ['Chest', r.chest_cm, 'cm'],
-                    ['Waist', r.waist_cm, 'cm'],
-                    ['L. Bicep', r.bicep_left_cm, 'cm'],
-                    ['R. Bicep', r.bicep_right_cm, 'cm'],
-                    ['Body Fat', r.body_fat_pct, '%'],
-                  ].map(([label, val, unit]) => (
-                    <div key={String(label)} className="bg-gray-50 rounded-lg px-2 py-1.5">
-                      <p className="text-xs text-gray-400">{label}</p>
-                      <p className="font-semibold text-gray-800">{val != null ? `${Number(val)}${unit}` : '—'}</p>
-                    </div>
-                  ))}
-                </div>
-                {r.notes && <p className="text-xs text-gray-500 mt-2 italic">{r.notes}</p>}
-              </div>
-            ))
           )}
         </div>
       )}

@@ -50,13 +50,20 @@ export default function MemberLayout() {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center gap-1 py-3 text-xs transition ${
-                isActive ? 'text-primary-400' : 'text-gray-500 hover:text-gray-300'
+              `flex-1 flex flex-col items-center gap-1 py-3 text-xs transition relative ${
+                isActive ? 'text-white' : 'text-gray-600 hover:text-gray-400'
               }`
             }
           >
-            <Icon className="w-5 h-5" />
-            <span>{label}</span>
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary-500 rounded-full" />
+                )}
+                <Icon className={`w-5 h-5 ${isActive ? 'text-primary-400' : ''}`} />
+                <span>{label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
