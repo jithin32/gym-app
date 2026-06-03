@@ -100,6 +100,7 @@ export default function AttendanceReport() {
                     <th className="px-4 py-3 font-semibold text-gray-600">Member</th>
                     <th className="px-4 py-3 font-semibold text-gray-600 hidden sm:table-cell">Coach</th>
                     <th className="px-4 py-3 font-semibold text-gray-600">Check-In</th>
+                    <th className="px-4 py-3 font-semibold text-gray-600">Check-Out</th>
                     {canAssign && <th className="px-4 py-3 font-semibold text-gray-600">Workout</th>}
                   </tr>
                 </thead>
@@ -114,16 +115,28 @@ export default function AttendanceReport() {
                       <td className="px-4 py-3 text-gray-600">
                         {new Date(r.check_in).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {r.check_out
+                          ? new Date(r.check_out).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                          : <span className="text-gray-300">—</span>}
+                      </td>
                       {canAssign && (
                         <td className="px-4 py-3">
-                          <button
-                            onClick={() => setAssignTarget({ id: r.member_db_id, name: r.full_name })}
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary-50 text-primary-700 hover:bg-primary-100 text-xs font-medium transition"
-                            title="Assign workout"
-                          >
-                            <Dumbbell className="w-3.5 h-3.5" />
-                            <span className="hidden sm:inline">Assign</span>
-                          </button>
+                          {r.has_completed_today ? (
+                            <span className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-green-50 text-green-600 text-xs font-medium">
+                              <Dumbbell className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Done</span>
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => setAssignTarget({ id: r.member_db_id, name: r.full_name })}
+                              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary-50 text-primary-700 hover:bg-primary-100 text-xs font-medium transition"
+                              title="Assign workout"
+                            >
+                              <Dumbbell className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Assign</span>
+                            </button>
+                          )}
                         </td>
                       )}
                     </tr>

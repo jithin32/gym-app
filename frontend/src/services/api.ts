@@ -54,6 +54,7 @@ export const coachesApi = {
 // Attendance
 export const attendanceApi = {
   mark: () => api.post('/attendance/mark'),
+  checkout: () => api.post('/attendance/checkout'),
   status: () => api.get('/attendance/status'),
   today: () => api.get('/attendance/today'),
   memberHistory: (id: number, params?: object) => api.get(`/attendance/member/${id}`, { params }),

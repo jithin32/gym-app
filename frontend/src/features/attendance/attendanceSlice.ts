@@ -9,6 +9,8 @@ interface AttendanceRecord {
   phone: string;
   coach_name: string;
   check_in: string;
+  check_out: string | null;
+  has_completed_today: boolean;
 }
 
 interface AttendanceState {
@@ -17,9 +19,11 @@ interface AttendanceState {
   totalActive: number;
   marked: boolean;
   checkIn: string | null;
+  checkOut: string | null;
   date: string;
   loading: boolean;
   marking: boolean;
+  checkingOut: boolean;
 }
 
 const initialState: AttendanceState = {
@@ -28,19 +32,26 @@ const initialState: AttendanceState = {
   totalActive: 0,
   marked: false,
   checkIn: null,
+  checkOut: null,
   date: '',
   loading: false,
   marking: false,
+  checkingOut: false,
 };
 
 export const checkStatus = createAsyncThunk('attendance/checkStatus', async () => {
   const res = await attendanceApi.status();
-  return res.data as { marked: boolean; checkIn: string | null; date: string };
+  return res.data as { marked: boolean; checkIn: string | null; checkOut: string | null; date: string };
 });
 
 export const markAttendance = createAsyncThunk('attendance/mark', async () => {
   const res = await attendanceApi.mark();
   return res.data as { alreadyMarked: boolean; checkIn?: string; date?: string };
+});
+
+export const checkoutAttendance = createAsyncThunk('attendance/checkout', async () => {
+  const res = await attendanceApi.checkout();
+  return res.data as { checkOut: string };
 });
 
 export const fetchToday = createAsyncThunk('attendance/fetchToday', async () => {
@@ -57,6 +68,7 @@ const attendanceSlice = createSlice({
       .addCase(checkStatus.fulfilled, (state, action) => {
         state.marked = action.payload.marked;
         state.checkIn = action.payload.checkIn;
+        state.checkOut = action.payload.checkOut;
         state.date = action.payload.date;
       })
       .addCase(markAttendance.pending, (state) => { state.marking = true; })
@@ -67,6 +79,12 @@ const attendanceSlice = createSlice({
         state.date = action.payload.date ?? state.date;
       })
       .addCase(markAttendance.rejected, (state) => { state.marking = false; })
+      .addCase(checkoutAttendance.pending, (state) => { state.checkingOut = true; })
+      .addCase(checkoutAttendance.fulfilled, (state, action) => {
+        state.checkingOut = false;
+        state.checkOut = action.payload.checkOut;
+      })
+      .addCase(checkoutAttendance.rejected, (state) => { state.checkingOut = false; })
       .addCase(fetchToday.pending, (state) => { state.loading = true; })
       .addCase(fetchToday.fulfilled, (state, action) => {
         state.loading = false;
